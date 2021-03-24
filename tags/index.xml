@@ -1,0 +1,23 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on dan&#39;s blog</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on dan&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+        <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>My_first_post</title>
+      <link>/posts/my_first_post/</link>
+      <pubDate>Wed, 24 Mar 2021 15:41:02 +1000</pubDate>
+      
+      <guid>/posts/my_first_post/</guid>
+      <description>&lt;p&gt;i have remade this thing 5 times im starting to lose a grip on reality the walls are speaking to me&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
