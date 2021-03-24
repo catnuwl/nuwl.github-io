@@ -1,14 +1,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on danny boy&#39;s blog</title>
+    <title>Posts on danny boi&#39;s blog</title>
     <link>https://nuwl.github.io/nuwl.github.io/posts/</link>
-    <description>Recent content in Posts on danny boy&#39;s blog</description>
+    <description>Recent content in Posts on danny boi&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 24 Mar 2021 15:41:02 +1000</lastBuildDate>
+    <lastBuildDate>Wed, 24 Mar 2021 16:07:27 +1000</lastBuildDate>
     
         <atom:link href="https://nuwl.github.io/nuwl.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>It_works</title>
+      <link>https://nuwl.github.io/nuwl.github.io/posts/it_works/</link>
+      <pubDate>Wed, 24 Mar 2021 16:07:27 +1000</pubDate>
+      
+      <guid>https://nuwl.github.io/nuwl.github.io/posts/it_works/</guid>
+      <description>&lt;p&gt;:D Yayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>My_first_post</title>
