@@ -7,75 +7,75 @@
         <span class="header right-side"></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Asuna</h1><p class="article date">Thursday, March 25, 2021</p></section><article class="article markdown-body"><p>I created my first discord bot, <a href="https://github.com/kiseu/asuna"target="_blank" rel="noopener noreferrer">Asuna</a>
 , back in December 2019.</p>
+<p>The purpose of this bot was to check the availability of a given username on a wide range of sites, and return specific details about it easily and quickly.</p>
 <p><img  src="/nuwl.github.io/asuna-showcase-1.png#center"
         alt="image"/></p>
-<p>The purpose of this bot was to check the availability of a given username on a wide range of sites, and return specific details about it easily and quickly.</p>
 <p>The main elements of this bot were the <a href="https://discordpy.readthedocs.io/en/latest/index.html"target="_blank" rel="noopener noreferrer">discord</a>
  and <a href="https://requests.readthedocs.io/en/master/"target="_blank" rel="noopener noreferrer">requests</a>
  libraries.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> discord
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#f92672">import</span> discord
 <span style="color:#f92672">import</span> requests
 <span style="color:#f92672">import</span> string
 <span style="color:#f92672">import</span> asyncio
 <span style="color:#f92672">import</span> re 
-<span style="color:#f92672">from</span> lxml <span style="color:#f92672">import</span> html
+<span style="color:#f92672">from</span> lxml <span style="color:#66d9ef">import</span> html
 </code></pre></div><p>The way I decided to check the availability of a username was to check for a 404 back from testing the url. This worked fine for websites like Soundcloud and GitHub, however, I quickly realised some different sites responded with other results and I decided to use individual functions for checking different sites.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">async <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">scloud</span>(message, value):
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">scloud</span>(message, value):
     headers <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;User-Agent&#39;</span>: <span style="color:#e6db74">&#39;Mozilla/5.0&#39;</span>}
-    r <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(f<span style="color:#e6db74">&#34;https://soundcloud.com/{value}&#34;</span>,headers<span style="color:#f92672">=</span>headers)
+    r <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(f<span style="color:#e6db74">&#34;https://soundcloud.com/</span><span style="color:#e6db74">{value}</span><span style="color:#e6db74">&#34;</span>,headers<span style="color:#f92672">=</span>headers)
 </code></pre></div><p>Then, I check the resulting status code from the request and let the bot send a formatted message back.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">if</span> r<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">404</span>:
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#66d9ef">if</span> r<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">404</span>:
 	embed<span style="color:#f92672">=</span>discord<span style="color:#f92672">.</span>Embed(color<span style="color:#f92672">=</span><span style="color:#ae81ff">0x80ff80</span>)
 	embed<span style="color:#f92672">.</span>set_author(name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SoundCloud&#34;</span>, url<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://soundcloud.com/&#34;</span> <span style="color:#f92672">+</span> value)
 	embed<span style="color:#f92672">.</span>add_field(name<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Available ✅&#34;</span>, value<span style="color:#f92672">=</span> value <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; is available on SoundCloud.&#34;</span>)
-	await message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(embed<span style="color:#f92672">=</span>embed)
+	<span style="color:#66d9ef">await</span> message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(embed<span style="color:#f92672">=</span>embed)
 <span style="color:#66d9ef">else</span>:
     embed<span style="color:#f92672">=</span>discord<span style="color:#f92672">.</span>Embed(color<span style="color:#f92672">=</span><span style="color:#ae81ff">0xe15b5b</span>)
     embed<span style="color:#f92672">.</span>set_author(name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SoundCloud&#34;</span>, url<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://soundcloud.com/&#34;</span> <span style="color:#f92672">+</span> value)
     embed<span style="color:#f92672">.</span>add_field(name<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Taken ❌&#34;</span>, value<span style="color:#f92672">=</span> value <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; is taken on SoundCloud.&#34;</span>)
     embed<span style="color:#f92672">.</span>add_field(name<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Profile&#34;</span>, value<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;https://soundcloud.com/&#34;</span> <span style="color:#f92672">+</span> value)
-    await message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(embed<span style="color:#f92672">=</span>embed)
+    <span style="color:#66d9ef">await</span> message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(embed<span style="color:#f92672">=</span>embed)
 </code></pre></div><p>On websites like Steam I had to use a different approach&hellip;</p>
 <p><img  src="/nuwl.github.io/asuna-steam-error.png#center"
         alt="image"/></p>
 <p>I didn&rsquo;t recieve a 404, but I realised I could scrape the website and search for the error text!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">async <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">steamid</span>(message, value):
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">steamid</span>(message, value):
     headers <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;User-Agent&#39;</span>: <span style="color:#e6db74">&#39;Mozilla/5.0&#39;</span>}
-    r <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(f<span style="color:#e6db74">&#34;https://steamcommunity.com/id/{value}&#34;</span>,headers<span style="color:#f92672">=</span>headers)
+    r <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(f<span style="color:#e6db74">&#34;https://steamcommunity.com/id/</span><span style="color:#e6db74">{value}</span><span style="color:#e6db74">&#34;</span>,headers<span style="color:#f92672">=</span>headers)
     s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;The specified profile could not be found.&#34;</span>
 
 	<span style="color:#66d9ef">if</span> s <span style="color:#f92672">in</span> r<span style="color:#f92672">.</span>text:
        	embed<span style="color:#f92672">=</span>discord<span style="color:#f92672">.</span>Embed(color<span style="color:#f92672">=</span><span style="color:#ae81ff">0x80ff80</span>)
         embed<span style="color:#f92672">.</span>set_author(name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Steam ID&#34;</span>, url<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://steamcommunity.com/id/&#34;</span> <span style="color:#f92672">+</span> value)
         embed<span style="color:#f92672">.</span>add_field(name<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Available ✅&#34;</span>, value<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ID &#34;</span> <span style="color:#f92672">+</span> value <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; is available on Steam.&#34;</span>)
-        await message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(embed<span style="color:#f92672">=</span>embed)
+        <span style="color:#66d9ef">await</span> message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(embed<span style="color:#f92672">=</span>embed)
 </code></pre></div><p>Because Steam was one of the main sites I wanted to use the bot for personally, I added some extra functionality for it, like the user&rsquo;s name and when they were last online.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">tree <span style="color:#f92672">=</span> html<span style="color:#f92672">.</span>fromstring(r<span style="color:#f92672">.</span>content)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3">tree <span style="color:#f92672">=</span> html<span style="color:#f92672">.</span>fromstring(r<span style="color:#f92672">.</span>content)
 hr <span style="color:#f92672">=</span> tree<span style="color:#f92672">.</span>xpath(<span style="color:#e6db74">&#39;//div//span[@class=&#34;actual_persona_name&#34;]/text()&#39;</span>)
 lastonline <span style="color:#f92672">=</span> tree<span style="color:#f92672">.</span>xpath(<span style="color:#e6db74">&#39;//div[@class=&#34;profile_in_game_name&#34;]/text()&#39;</span>)
 status <span style="color:#f92672">=</span> tree<span style="color:#f92672">.</span>xpath(<span style="color:#e6db74">&#39;//div[@class=&#34;profile_in_game_header&#34;]/text()&#39;</span>) 
 </code></pre></div><p>I used this same method for Steam groups but added a check for strange unicode and greek characters to point out and laugh at people faking valuable handles 🤭</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> tag<span style="color:#f92672">.</span>isascii():
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> tag<span style="color:#f92672">.</span>isascii():
 	hasunicode <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;True 🤣 : `&#39;</span> <span style="color:#f92672">+</span> tag<span style="color:#f92672">.</span>encode(encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ascii&#39;</span>, errors<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;backslashreplace&#39;</span>)<span style="color:#f92672">.</span>decode() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;`&#39;</span>
-</code></pre></div><p>For Twitter I needed to account for suspended accounts as well.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">t <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;errorpage-footer&#34;</span>
+</code></pre></div><p>For Twitter I needed to account for suspended handles too.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3">t <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;errorpage-footer&#34;</span>
 t2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Account Suspended&#34;</span>
 
 <span style="color:#66d9ef">if</span> t <span style="color:#f92672">in</span> r<span style="color:#f92672">.</span>text <span style="color:#f92672">and</span> t2 <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> r<span style="color:#f92672">.</span>text:
 </code></pre></div><p>And last of all, the bot checks for the commands.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@client.event</span>
-async <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">on_message</span>(message):
-    <span style="color:#66d9ef">print</span>(message<span style="color:#f92672">.</span>content)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#a6e22e">@client</span><span style="color:#f92672">.</span>event
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">on_message</span>(message):
+    print(message<span style="color:#f92672">.</span>content)
     <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;!soundcloud&#34;</span> <span style="color:#f92672">in</span> message<span style="color:#f92672">.</span>content:
         left, soundcloud, wordstr <span style="color:#f92672">=</span> message<span style="color:#f92672">.</span>content<span style="color:#f92672">.</span>partition(<span style="color:#e6db74">&#34;!soundcloud&#34;</span>) 
         words: list <span style="color:#f92672">=</span> wordstr<span style="color:#f92672">.</span>split()
         <span style="color:#66d9ef">for</span> value <span style="color:#f92672">in</span> words:
             value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span>join(re<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;[^a-zA-Z0-9_]*&#34;</span>, value)) 
             <span style="color:#66d9ef">if</span> len(value) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">45</span>:
-                await message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#34;`SoundCloud URL limit is 45.`&#34;</span>)
+                <span style="color:#66d9ef">await</span> message<span style="color:#f92672">.</span>channel<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#34;`SoundCloud URL limit is 45.`&#34;</span>)
                 <span style="color:#66d9ef">return</span>
             <span style="color:#66d9ef">else</span>:
-                await scloud(message, value)
+                <span style="color:#66d9ef">await</span> scloud(message, value)
 </code></pre></div></article>
 </div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/nuwl.github.io/posts/it_works/"><span class="iconfont icon-article"></span>It works!!!!</a></p></section></div></section><section id="footer"><div class="footer-wrap">
