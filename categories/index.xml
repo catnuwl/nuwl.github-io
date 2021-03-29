@@ -10,6 +10,72 @@
     
     
     <item>
+      <title>Nightcorer (WORK IN PROGRESS)</title>
+      <link>https://nuwl.github.io/nuwl.github.io/posts/nightcorer/</link>
+      <pubDate>Mon, 29 Mar 2021 14:50:56 +1000</pubDate>
+      
+      <guid>https://nuwl.github.io/nuwl.github.io/posts/nightcorer/</guid>
+      <description>&lt;p&gt;&lt;em&gt;work in progress post&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;I started working on my second major python project &amp;lsquo;Nightcorer&amp;rsquo; mid February this year and am still working on it. My goal with this program is to have an easy, quick way to download playlists or individual songs and resample ( &lt;a href=&#34;https://en.wikipedia.org/wiki/Nightcore&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;nightcore&lt;/a&gt;
+) each song into a folder.&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;https://nuwl.github.io/nuwl.github.io/nuwl.github.io/nightcorer-showcase-1.png#center&#34;
+        alt=&#34;image&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;Planned features are downloading playlists and a mix option, which would compile all songs into one song with smooth fade transitions. Currently this program can download a song from a YouTube link and resample it to a desired speed.&lt;/p&gt;
+&lt;p&gt;The integral libraries I&amp;rsquo;m using are &lt;a href=&#34;https://youtube-dl.org&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;youtube-dl&lt;/a&gt;
+, &lt;a href=&#34;https://pysimplegui.readthedocs.io/en/latest/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PySimpleGUI&lt;/a&gt;
+ and &lt;a href=&#34;https://github.com/SeparateRecords/nightcore&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;nightcore&lt;/a&gt;
+.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python3&#34; data-lang=&#34;python3&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; youtube_dl &lt;span style=&#34;color:#66d9ef&#34;&gt;import&lt;/span&gt; YoutubeDL
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pydub &lt;span style=&#34;color:#66d9ef&#34;&gt;import&lt;/span&gt; AudioSegment
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; PySimpleGUI &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; sg
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; nightcore &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; nc
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; ffmpeg
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; sys
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; os
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The first function just defines the system path.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python3&#34; data-lang=&#34;python3&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;resource_path&lt;/span&gt;(relative_path):
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34; Get absolute path to resource, works for dev and for PyInstaller &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
+        &lt;span style=&#34;color:#75715e&#34;&gt;# PyInstaller creates a temp folder and stores path in _MEIPASS&lt;/span&gt;
+        base_path &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_MEIPASS
+        print(sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_MEIPASS)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Exception&lt;/span&gt;:
+        base_path &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;path&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;abspath(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.&amp;#34;&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;path&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(base_path, relative_path)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then we create the folders for downloaded songs if they don&amp;rsquo;t exist yet.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python3&#34; data-lang=&#34;python3&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;path&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;exists(os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getcwd() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Nightcored&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;):
+    os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;makedirs(os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getcwd() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Nightcored&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;path&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;exists(os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getcwd() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;\Temp&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;):
+    os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;makedirs(os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getcwd() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;\Temp&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The GUI window is created.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python3&#34; data-lang=&#34;python3&#34;&gt;sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;LOOK_AND_FEEL_TABLE[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MyNewTheme&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BACKGROUND&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#94233e&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;TEXT&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#000000&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;INPUT&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#f5d0d3&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;TEXT_INPUT&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#000000&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SCROLL&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#f5d0d3&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUTTON&amp;#39;&lt;/span&gt;: (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;white&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#b8777d&amp;#39;&lt;/span&gt;),
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;PROGRESS&amp;#39;&lt;/span&gt;: (&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#01826B&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#D0D0D0&amp;#39;&lt;/span&gt;),
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BORDER&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0.2&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SLIDER_DEPTH&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0.5&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;PROGRESS_DEPTH&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,}
+&lt;span style=&#34;color:#75715e&#34;&gt;# Switch to use your newly created theme&lt;/span&gt;
+sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;theme(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MyNewTheme&amp;#39;&lt;/span&gt;)
+
+layout &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Text(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Youtube URL&amp;#39;&lt;/span&gt;, font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;),text_color&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#ffffff&amp;#39;&lt;/span&gt;)],
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;InputText(default_text&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;,font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;))],
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Text(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Nightcore pitch (2.5 recommended)&amp;#39;&lt;/span&gt;, font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;),text_color&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#ffffff&amp;#39;&lt;/span&gt;)],
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Slider(range&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;6.0&lt;/span&gt;,&lt;span style=&#34;color:#ae81ff&#34;&gt;6.0&lt;/span&gt;),default_value&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,resolution&lt;span style=&#34;color:#f92672&#34;&gt;=.&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;,orientation&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;horizontal&amp;#39;&lt;/span&gt;,text_color&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#ffffff&amp;#39;&lt;/span&gt;,font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;),)],
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Text(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Format&amp;#39;&lt;/span&gt;, font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;),text_color&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#ffffff&amp;#39;&lt;/span&gt;)],
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DropDown(allowedformats,default_value&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mp3&amp;#34;&lt;/span&gt;,size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;,&lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;),text_color&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;000000&amp;#39;&lt;/span&gt;,readonly&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;,font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;))],
+[sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Submit(font&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Open Sans&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;))]]
+
+window &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sg&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Window(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Nightcorer&amp;#39;&lt;/span&gt;, layout, no_titlebar&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;False&lt;/span&gt;, alpha_channel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, grab_anywhere&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;False&lt;/span&gt;, icon&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;resource_path(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;nc.ico&amp;#39;&lt;/span&gt;))
+event, values &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; window&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
       <title>Asuna</title>
       <link>https://nuwl.github.io/nuwl.github.io/posts/asuna_bot/</link>
       <pubDate>Thu, 25 Mar 2021 14:21:08 +1000</pubDate>
@@ -87,26 +153,6 @@ t2 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;
             &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
                 &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; scloud(message, value)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title>It works!!!!</title>
-      <link>https://nuwl.github.io/nuwl.github.io/posts/it_works/</link>
-      <pubDate>Wed, 24 Mar 2021 16:07:27 +1000</pubDate>
-      
-      <guid>https://nuwl.github.io/nuwl.github.io/posts/it_works/</guid>
-      <description>&lt;p&gt;👍👍👍👍 Yayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>My first post...</title>
-      <link>https://nuwl.github.io/nuwl.github.io/posts/my_first_post/</link>
-      <pubDate>Wed, 24 Mar 2021 15:41:02 +1000</pubDate>
-      
-      <guid>https://nuwl.github.io/nuwl.github.io/posts/my_first_post/</guid>
-      <description>&lt;p&gt;I have remade this thing &lt;strong&gt;5 times&lt;/strong&gt;. I&amp;rsquo;m starting to lose a grip on reality and the walls are speaking to me.&lt;/p&gt;
-</description>
     </item>
     
   </channel>

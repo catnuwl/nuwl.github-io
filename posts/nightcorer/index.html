@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.82.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Nightcorer (WORK IN PROGRESS)&nbsp;&ndash;&nbsp;dan&#39;s blog</title><link rel="stylesheet" href="/nuwl.github.io/css/core.min.f77f993a1ebf6e7c5afa12de97a7463dedbe9935543d3d1cb770d002192f6d3393163c76e68e473a4caa015bfca4e4a0.css" integrity="sha384-93&#43;ZOh6/bnxa&#43;hLel6dGPe2&#43;mTVUPT0ct3DQAhkvbTOTFjx25o5HOkyqAVv8pOSg"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Nightcorer (WORK IN PROGRESS)" /><body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/nuwl.github.io/"><span class="site name">dan's blog</span></a></span>
+        <span class="header right-side"></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Nightcorer (WORK IN PROGRESS)</h1><p class="article date">Monday, March 29, 2021</p></section><article class="article markdown-body"><p><em>work in progress post</em></p>
+<p>I started working on my second major python project &lsquo;Nightcorer&rsquo; mid February this year and am still working on it. My goal with this program is to have an easy, quick way to download playlists or individual songs and resample ( <a href="https://en.wikipedia.org/wiki/Nightcore"target="_blank" rel="noopener noreferrer">nightcore</a>
+) each song into a folder.</p>
+<p><img  src="/nuwl.github.io/nightcorer-showcase-1.png#center"
+        alt="image"/></p>
+<p>Planned features are downloading playlists and a mix option, which would compile all songs into one song with smooth fade transitions. Currently this program can download a song from a YouTube link and resample it to a desired speed.</p>
+<p>The integral libraries I&rsquo;m using are <a href="https://youtube-dl.org"target="_blank" rel="noopener noreferrer">youtube-dl</a>
+, <a href="https://pysimplegui.readthedocs.io/en/latest/"target="_blank" rel="noopener noreferrer">PySimpleGUI</a>
+ and <a href="https://github.com/SeparateRecords/nightcore"target="_blank" rel="noopener noreferrer">nightcore</a>
+.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#f92672">from</span> youtube_dl <span style="color:#66d9ef">import</span> YoutubeDL
+<span style="color:#f92672">from</span> pydub <span style="color:#66d9ef">import</span> AudioSegment
+<span style="color:#f92672">import</span> PySimpleGUI <span style="color:#66d9ef">as</span> sg
+<span style="color:#f92672">import</span> nightcore <span style="color:#66d9ef">as</span> nc
+<span style="color:#f92672">import</span> ffmpeg
+<span style="color:#f92672">import</span> sys
+<span style="color:#f92672">import</span> os
+</code></pre></div><p>The first function just defines the system path.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">resource_path</span>(relative_path):
+    <span style="color:#e6db74">&#34;&#34;&#34; Get absolute path to resource, works for dev and for PyInstaller &#34;&#34;&#34;</span>
+    <span style="color:#66d9ef">try</span>:
+        <span style="color:#75715e"># PyInstaller creates a temp folder and stores path in _MEIPASS</span>
+        base_path <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>_MEIPASS
+        print(sys<span style="color:#f92672">.</span>_MEIPASS)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span>:
+        base_path <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>abspath(<span style="color:#e6db74">&#34;.&#34;</span>)
+
+    <span style="color:#66d9ef">return</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(base_path, relative_path)
+</code></pre></div><p>Then we create the folders for downloaded songs if they don&rsquo;t exist yet.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3"><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>exists(os<span style="color:#f92672">.</span>getcwd() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">Nightcored</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34;</span>):
+    os<span style="color:#f92672">.</span>makedirs(os<span style="color:#f92672">.</span>getcwd() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">Nightcored</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34;</span>)
+
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>exists(os<span style="color:#f92672">.</span>getcwd() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\Temp</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34;</span>):
+    os<span style="color:#f92672">.</span>makedirs(os<span style="color:#f92672">.</span>getcwd() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\Temp</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><p>The GUI window is created.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python3" data-lang="python3">sg<span style="color:#f92672">.</span>LOOK_AND_FEEL_TABLE[<span style="color:#e6db74">&#39;MyNewTheme&#39;</span>] <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;BACKGROUND&#39;</span>: <span style="color:#e6db74">&#39;#94233e&#39;</span>,
+<span style="color:#e6db74">&#39;TEXT&#39;</span>: <span style="color:#e6db74">&#39;#000000&#39;</span>,
+<span style="color:#e6db74">&#39;INPUT&#39;</span>: <span style="color:#e6db74">&#39;#f5d0d3&#39;</span>,
+<span style="color:#e6db74">&#39;TEXT_INPUT&#39;</span>: <span style="color:#e6db74">&#39;#000000&#39;</span>,
+<span style="color:#e6db74">&#39;SCROLL&#39;</span>: <span style="color:#e6db74">&#39;#f5d0d3&#39;</span>,
+<span style="color:#e6db74">&#39;BUTTON&#39;</span>: (<span style="color:#e6db74">&#39;white&#39;</span>, <span style="color:#e6db74">&#39;#b8777d&#39;</span>),
+<span style="color:#e6db74">&#39;PROGRESS&#39;</span>: (<span style="color:#e6db74">&#39;#01826B&#39;</span>, <span style="color:#e6db74">&#39;#D0D0D0&#39;</span>),
+<span style="color:#e6db74">&#39;BORDER&#39;</span>: <span style="color:#ae81ff">0.2</span>, <span style="color:#e6db74">&#39;SLIDER_DEPTH&#39;</span>: <span style="color:#ae81ff">0.5</span>, <span style="color:#e6db74">&#39;PROGRESS_DEPTH&#39;</span>: <span style="color:#ae81ff">0</span>,}
+<span style="color:#75715e"># Switch to use your newly created theme</span>
+sg<span style="color:#f92672">.</span>theme(<span style="color:#e6db74">&#39;MyNewTheme&#39;</span>)
+
+layout <span style="color:#f92672">=</span> [
+[sg<span style="color:#f92672">.</span>Text(<span style="color:#e6db74">&#39;Youtube URL&#39;</span>, font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>, <span style="color:#ae81ff">10</span>),text_color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;#ffffff&#39;</span>)],
+[sg<span style="color:#f92672">.</span>InputText(default_text<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>,font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>, <span style="color:#ae81ff">10</span>))],
+[sg<span style="color:#f92672">.</span>Text(<span style="color:#e6db74">&#39;Nightcore pitch (2.5 recommended)&#39;</span>, font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>, <span style="color:#ae81ff">10</span>),text_color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;#ffffff&#39;</span>)],
+[sg<span style="color:#f92672">.</span>Slider(range<span style="color:#f92672">=</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">6.0</span>,<span style="color:#ae81ff">6.0</span>),default_value<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,resolution<span style="color:#f92672">=.</span><span style="color:#ae81ff">1</span>,orientation<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;horizontal&#39;</span>,text_color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;#ffffff&#39;</span>,font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>,<span style="color:#ae81ff">10</span>),)],
+[sg<span style="color:#f92672">.</span>Text(<span style="color:#e6db74">&#39;Format&#39;</span>, font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>, <span style="color:#ae81ff">10</span>),text_color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;#ffffff&#39;</span>)],
+[sg<span style="color:#f92672">.</span>DropDown(allowedformats,default_value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mp3&#34;</span>,size<span style="color:#f92672">=</span>(<span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">20</span>),text_color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;000000&#39;</span>,readonly<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>, <span style="color:#ae81ff">10</span>))],
+[sg<span style="color:#f92672">.</span>Submit(font<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Open Sans&#34;</span>, <span style="color:#ae81ff">10</span>))]]
+
+window <span style="color:#f92672">=</span> sg<span style="color:#f92672">.</span>Window(<span style="color:#e6db74">&#39;Nightcorer&#39;</span>, layout, no_titlebar<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, alpha_channel<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, grab_anywhere<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, icon<span style="color:#f92672">=</span>resource_path(<span style="color:#e6db74">&#39;nc.ico&#39;</span>))
+event, values <span style="color:#f92672">=</span> window<span style="color:#f92672">.</span>read()
+</code></pre></div></article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/nuwl.github.io/posts/asuna_bot/"><span class="iconfont icon-article"></span>Asuna</a></p></section></div></section><section id="footer"><div class="footer-wrap">
+    <p class="copyright">dan's blog</p>
+    <p class="powerby"><span>Powered&nbsp;by&nbsp;</span><a href="https://gohugo.io" 
+        target="_blank" rel="noopener noreferrer">Hugo</a><span>&nbsp;&amp;&nbsp;</span><a href="https://themes.gohugo.io/hugo-notepadium/" 
+        target="_blank" rel="noopener noreferrer">Notepadium</a></p></div>
+</section></body>
+
+</html>
